@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NASA APOC API and DOM Manipulation</title>
+    <style>
+      img {
+        width: 1000px;
+        height: 800px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let url = "https://api.nasa.gov/planetary/apod?api_key=T8aSxEpRnIRs8yUHezSuPvuuLRriVNrqLUwW3p8N"
+      fetch(url).then(response =>{
+        return response.json();
+      }).then(json => {
+        console.log(json);
+        
+       let h1 = document.createElement("h1");
+h1.innerHTML = json.title;
+        let p1 = document.createElement("p");
+        p1.innerHTML = json.date;
+
+        let p2 = document.createElement("p");
+        p2.innerHTML = json.explanation;
+
+        let img = document.createElement("img");
+        img.src = json.hdurl;
+        
+        document.body.appendChild(h1);
+        document.body.appendChild(p1);
+        document.body.appendChild(p2);
+        document.body.appendChild(img);
+        
+        
+      }).catch(err =>alert(err))
+    </script>
+  </body>
+</html>
