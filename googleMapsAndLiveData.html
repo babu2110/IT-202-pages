@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynamic data Map</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default">         </script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script>
+      let inspection_data_url = "https://data.cityofchicago.org/resource/4ijn-s7e5.json?zip=60607&$LIMIT=100"
+      let map;
+
+      fetch(inspection_data_url).then( (response) => {
+        return response.json();
+      }).then( (json) => {
+        // making sure the data has been captured
+        console.log(json);
+        // creating the map
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: parseFloat(json[0].latitude), lng: parseFloat(json[0].longitude) },
+          zoom: 8,
+        });
+        //marker context variable
+        const infoW = new google.maps.InfoWindow({
+          content: "",
+        });
+        // for each json
+        json.forEach( e =>{
+          // Getting lat and long
+          const myLatLng = { lat: parseFloat(e.latitude), lng: parseFloat(e.longitude) };
+          // checking, testing purpose
+          console.log(parseFloat(e.latitude) + ", " + parseFloat(e.longitude));
+          // create a marker on each long and lat
+          const m = new google.maps.Marker({
+            position: myLatLng,
+            map,
+            title: "e.dba_name",
+          });
+          // listener to the map
+          m.addListener("click", () => {
+            const splitDate = e.inspection_date.split('T');
+            infoW.setContent("<p><b>DBA_NAME:</b> " +e.dba_name + "</p><p><b>Facility type:</b> "
+                             + e.facility_type + "</p><p><b>Address:</b> " + e.address 
+                             + "</p><p><b>Inspection date:</b> " + splitDate[0] 
+                             + "</p><p><b>Results:</b> " + e.results + "</p>");
+            infoW.open({
+            anchor: m, map, shouldFocus: true,
+            });
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD99B_ZRHPEcCbCUCdeRMYnAimmN5r69Lo&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
