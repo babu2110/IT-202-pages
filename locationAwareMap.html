@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>Geolocation with Google Maps</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="icon" type="image/png" href="https://findicons.com/files/icons/2796/metro_uinvert_dock/128/google_maps.png">
+    <style>
+      /* 
+ * Always set the map height explicitly to define the size of the div element
+ * that contains the map. 
+ */
+      #map {
+        height: 70%;
+        width: 100%;
+      }
+      #currentLoc{
+/*         width: 65%; */
+        margin-top: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="currentLoc"></div>
+
+    <!-- 
+     The `defer` attribute causes the callback to execute after the full HTML
+     document has been parsed. For non-blocking uses, avoiding race conditions,
+     and consistent behavior across browsers, consider loading using Promises
+     with https://www.npmjs.com/package/@googlemaps/js-api-loader.
+    -->
+    <script>
+      let map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          // 46.8625° N, 103.8467° E , Where I came from
+          center: { lat: 46.8625, lng: 103.8467 },
+          zoom: 3,
+        });
+        const displayLoc = document.querySelector("#currentLoc");
+        const date = new Date();
+        // check whether the geolocation is available on the html
+        if('geolocation' in navigator){
+          // watch the location
+          const watchId = navigator.geolocation.watchPosition((pos) => {
+            // recenter at the current location
+            map = new google.maps.Map(document.getElementById("map"), {
+              center: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+              zoom: 10,
+            });
+            // display current location in DIV
+            displayLoc.insertAdjacentText('afterbegin', '\nLat: ' + pos.coords.latitude + ', ' + 'Lng: '+pos.coords.longitude + ' ' + date.toString());
+            // add a newline?
+            displayLoc.insertAdjacentText('afterbegin', '\n');
+            // in order to draw a dot
+            const fromToWhere = [
+              {lat: parseFloat(pos.coords.latitude), lng: parseFloat(pos.coords.longitude)},
+              {lat: parseFloat(pos.coords.latitude), lng: parseFloat(pos.coords.longitude)},
+            ];
+            // set up the methods
+            const path = new google.maps.Polyline({
+              path: fromToWhere,
+              strokeColor: "#FF0000",
+              stokeWeight: 10,
+            });
+            // draw it on the map
+            path.setMap(map);
+            console.log(pos.coords.latitude);
+            console.log(pos.coords.longitude);
+          });
+        } else {
+          displayLoc.insertAdjacentText('afterbegin', 'The browser does not support geolocation!')
+          console.log("Geolocation is not in Navigator!")
+        }
+      }
+      window.initMap = initMap;
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD99B_ZRHPEcCbCUCdeRMYnAimmN5r69Lo&callback=initMap&v=weekly"
+      defer
+    ></script>
+  </body>
+</html>
