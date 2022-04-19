@@ -13,7 +13,6 @@
         width: 100%;
       }
       #currentLoc{
-/*         width: 65%; */
         margin-top: 50px;
       }
     </style>
@@ -30,6 +29,7 @@
     -->
     <script>
       let map;
+      const breaker = document.createElement('br');
       function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
           // 46.8625° N, 103.8467° E , Where I came from
@@ -42,30 +42,21 @@
         if('geolocation' in navigator){
           // watch the location
           const watchId = navigator.geolocation.watchPosition((pos) => {
-            // recenter at the current location
-            map = new google.maps.Map(document.getElementById("map"), {
-              center: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-              zoom: 10,
-            });
-            // display current location in DIV
-            displayLoc.insertAdjacentText('afterbegin', '\nLat: ' + pos.coords.latitude + ', ' + 'Lng: '+pos.coords.longitude + ' ' + date.toString());
-            // add a newline?
-            displayLoc.insertAdjacentText('afterbegin', '\n');
-            // in order to draw a dot
-            const fromToWhere = [
-              {lat: parseFloat(pos.coords.latitude), lng: parseFloat(pos.coords.longitude)},
-              {lat: parseFloat(pos.coords.latitude), lng: parseFloat(pos.coords.longitude)},
-            ];
-            // set up the methods
-            const path = new google.maps.Polyline({
-              path: fromToWhere,
+            map.setCenter({lat: pos.coords.latitude, lng: pos.coords.longitude});
+            map.setZoom(18);
+            displayLoc.append(breaker.cloneNode());
+            displayLoc.append('Lat: ' + pos.coords.latitude + ', ' + 'Lng: '+pos.coords.longitude + ' ' + date.toString());
+            //
+            const path = new google.maps.Circle({
+              center: {lat: parseFloat(pos.coords.latitude), lng: parseFloat(pos.coords.longitude)},
               strokeColor: "#FF0000",
               stokeWeight: 10,
+              fillColor: "#FF0000",
+              fillOpacity: 1,
+              radius: 2,
             });
             // draw it on the map
             path.setMap(map);
-            console.log(pos.coords.latitude);
-            console.log(pos.coords.longitude);
           });
         } else {
           displayLoc.insertAdjacentText('afterbegin', 'The browser does not support geolocation!')
