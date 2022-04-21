@@ -6,12 +6,18 @@
   <meta name="viewport" content="width=device-width">
   <title>Text to Speech</title>
   <style>
-    
+    #container{
+      margin: auto;
+      width: 60%;
+      border: 5px solid #FFFF00;
+      padding: 10px;
+    }
   </style>
 </head>
 
 <body>
-  <textarea rows = "6" cols = "60" id = "txtInput">
+  <div id = 'container'>
+    <textarea rows = "6" cols = "60" id = "txtInput">
  </textarea>
   <br>
   <br>
@@ -20,6 +26,7 @@
   <button id = "btnSpeak" disabled>
     Convert
   </button>
+  </div>
   <script>
     var voiceList = document.querySelector('#voiceList');
     var txtInput = document.querySelector('#txtInput');
